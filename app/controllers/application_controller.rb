@@ -1,8 +1,11 @@
-
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   private
+
+  def validate_request(request_id)
+    Request.exists?(request_id)
+  end
 
   def validate_password_reset_token(token)
     password_reset_token = PasswordResetToken.find_by(token: token)

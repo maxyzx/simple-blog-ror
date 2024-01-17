@@ -1,7 +1,11 @@
 Rails.application.routes.draw do
   # Other routes definitions...
 
-  resources :requests, only: [:create] do
+  # This is the new route for creating requests with the specified endpoint
+  post '/api/requests', to: 'requests#create'
+
+  # Keep the custom collection route for 'send_request' under the 'requests' resource
+  resources :requests, only: [] do
     collection do
       post 'send', to: 'requests#send_request'
     end

@@ -1,7 +1,7 @@
 class RequestsController < ApplicationController
   include RequestParams
   before_action :validate_user, only: [:send_to_hairstylist]
-  before_action :validate_request, only: [:send_to_hairstylist]
+  before_action :validate_request, only: [:send_to_hairstylist, :send] # Added :send to the before_action for validate_request
 
   def create
     request = Request.new(request_params)
@@ -27,6 +27,22 @@ class RequestsController < ApplicationController
     end
   end
 
+  def send
+    request_id = params[:request_id]
+
+    if Request.exists_with_id?(request_id)
+      request = Request.find(request_id)
+      if request.user_id.present? # Check if the request is associated with a user
+        request.assign_to_user_and_set_status(request.user_id)
+        render json: { message: 'Request has been sent successfully.', status: 'assigned' }, status: :ok
+      else
+        render json: { error: 'Request is not associated with a user' }, status: :unprocessable_entity
+      end
+    else
+      render json: { error: 'Request not found' }, status: :not_found
+    end
+  end
+
   private
 
   def request_params
@@ -38,6 +54,9 @@ class RequestsController < ApplicationController
   end
 
   def validate_request
-    render json: { error: 'Request not found' }, status: :not_found unless Request.exists_with_id?(params[:request_id])
+    request_id = params[:request_id]
+    unless Request.exists_with_id?(request_id)
+      render json: { error: 'Request not found' }, status: :not_found
+    end
   end
 end

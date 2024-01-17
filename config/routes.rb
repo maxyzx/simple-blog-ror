@@ -11,6 +11,9 @@ Rails.application.routes.draw do
     end
   end
 
+  # New route added to meet the requirement, avoiding conflict with existing '/api/requests'
+  post '/api/users', to: 'users#create'
+
   get '/api/users/validate_token/:token', to: 'users#validate_token', as: 'validate_user_token'
 
   namespace :api do

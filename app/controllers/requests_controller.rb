@@ -1,7 +1,18 @@
-
 class RequestsController < ApplicationController
+  include RequestParams
   before_action :validate_user, only: [:send_to_hairstylist]
   before_action :validate_request, only: [:send_to_hairstylist]
+
+  def create
+    request = Request.new(request_params)
+    request.status = 'new' # Set default status to 'new'
+
+    if request.save
+      render json: { request_id: request.id, status: 'created' }, status: :created
+    else
+      render json: { errors: request.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
 
   def send_to_hairstylist
     user_id = params[:user_id]
@@ -17,7 +28,11 @@ class RequestsController < ApplicationController
   end
 
   private
-  
+
+  def request_params
+    params.require(:request).permit(:area, :gender, :date_of_birth, :display_name, :menu, :hair_concerns, images: [])
+  end
+
   def validate_user
     render json: { error: 'User not found' }, status: :not_found unless User.exists_with_id?(params[:user_id])
   end

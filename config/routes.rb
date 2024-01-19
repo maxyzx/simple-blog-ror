@@ -1,10 +1,9 @@
 Rails.application.routes.draw do
-  	get 'welcome/index'
+  # Other routes...
 
-  
-	resources :articles do
-	  resources :comments
-	end
- 
-  	root 'welcome#index'
+  namespace :v1 do
+    resources :articles, only: [:show]
+  end
+
+  # More routes...
 end

@@ -1,10 +1,8 @@
 Rails.application.routes.draw do
-  	get 'welcome/index'
+  # Other routes...
 
-  
-	resources :articles do
-	  resources :comments
-	end
- 
-  	root 'welcome#index'
+  # This route is for listing all articles, as per the requirement
+  get '/articles', to: 'articles#index'
+
+  # More routes...
 end

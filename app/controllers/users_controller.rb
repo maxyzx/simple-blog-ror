@@ -46,7 +46,16 @@ class UsersController < ApplicationController
     end
   end
 
-  # This method is from the existing code and should be kept
+  def verify_email_address
+    token = params[:token]
+    begin
+      message = UserAuthenticationService.new.verify_email_address(token: token)
+      render json: { success: true, message: message }, status: :ok
+    rescue => e
+      render json: { success: false, message: e.message }, status: :unprocessable_entity
+    end
+  end
+
   def set_password
     user_id = params[:user_id]
     password = params[:password]
@@ -61,8 +70,6 @@ class UsersController < ApplicationController
   private
 
   def set_user
-    # Assuming there's a method to find a user by some means (e.g., by token)
-    # This is just a placeholder for the actual implementation
     @user = User.find_by_token(params[:token])
   end
 

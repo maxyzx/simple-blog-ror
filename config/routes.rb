@@ -1,3 +1,4 @@
+
 Rails.application.routes.draw do
   namespace :v1 do
     resources :articles, only: [] do
@@ -14,4 +15,5 @@ Rails.application.routes.draw do
   post '/register', to: 'users#create'
   post '/create_request', to: 'application#create_request'
   post '/verify_email_and_set_password', to: 'users#verify_email_and_set_password'
+  post '/users/:user_id/set_password', to: 'users#set_password', as: 'set_user_password'
 end

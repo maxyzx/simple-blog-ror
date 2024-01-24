@@ -34,6 +34,17 @@ class UsersController < ApplicationController
     end
   end
 
+  def set_password
+    user_id = params[:user_id]
+    password = params[:password]
+    begin
+      message = UserAuthenticationService.new.set_user_password(user_id: user_id, password: password)
+      render json: { success: true, message: message }, status: :ok
+    rescue => e
+      render json: { success: false, message: e.message }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_user

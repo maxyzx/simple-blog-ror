@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:verify_email_and_set_password]
+  before_action :find_user, only: [:agree_to_policies]
 
   def create
     @user = User.new(user_params)
@@ -23,12 +24,28 @@ class UsersController < ApplicationController
     end
   end
 
+  def agree_to_policies
+    begin
+      PrivacyPolicyAgreement.create!(user_id: @user.id, agreed_at: DateTime.now)
+      TermsOfUseAgreement.create!(user_id: @user.id, agreed_at: DateTime.now)
+      render json: { message: 'User has successfully agreed to the policies.' }, status: :ok
+    rescue => e
+      render json: { error: e.message }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_user
     # Assuming there's a method to find a user by some means (e.g., by token)
     # This is just a placeholder for the actual implementation
     @user = User.find_by_token(params[:token])
+  end
+
+  def find_user
+    @user = User.find(params[:user_id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'User not found' }, status: :not_found
   end
 
   def user_params

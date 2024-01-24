@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   end
 
   # Other routes
+  post '/users/:user_id/agree_to_policies', to: 'users#agree_to_policies', as: 'agree_to_policies'
   post '/register', to: 'users#create'
   post '/verify_email_and_set_password', to: 'users#verify_email_and_set_password'
 end

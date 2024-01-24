@@ -1,4 +1,3 @@
-
 class User < ApplicationRecord
   # Relationships
   has_many :requests, dependent: :destroy
@@ -7,7 +6,7 @@ class User < ApplicationRecord
   has_one :authentication_token, dependent: :destroy
 
   # Validations
-  validates :email, presence: true, uniqueness: true
+  validates :email, presence: true, uniqueness: true, format: { with: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i }
   validates :password, presence: true
   validates :display_name, presence: true
   validates :date_of_birth, presence: true

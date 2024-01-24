@@ -26,14 +26,27 @@ class UsersController < ApplicationController
 
   def agree_to_policies
     begin
-      PrivacyPolicyAgreement.create!(user_id: @user.id, agreed_at: DateTime.now)
-      TermsOfUseAgreement.create!(user_id: @user.id, agreed_at: DateTime.now)
+      # Create privacy policy agreement
+      privacy_policy_agreement = PrivacyPolicyAgreement.new(user_id: @user.id, agreed_at: DateTime.now)
+      unless privacy_policy_agreement.save
+        render json: { error: privacy_policy_agreement.errors.full_messages.join(', ') }, status: :unprocessable_entity
+        return
+      end
+
+      # Create terms of use agreement
+      terms_of_use_agreement = TermsOfUseAgreement.new(user_id: @user.id, agreed_at: DateTime.now)
+      unless terms_of_use_agreement.save
+        render json: { error: terms_of_use_agreement.errors.full_messages.join(', ') }, status: :unprocessable_entity
+        return
+      end
+
       render json: { message: 'User has successfully agreed to the policies.' }, status: :ok
     rescue => e
       render json: { error: e.message }, status: :unprocessable_entity
     end
   end
 
+  # This method is from the existing code and should be kept
   def set_password
     user_id = params[:user_id]
     password = params[:password]

@@ -11,7 +11,7 @@ class User < ApplicationRecord
   validates :display_name, presence: true
   validates :date_of_birth, presence: true
   validates :gender, presence: true
-  validates :is_customer, inclusion: { in: [true, false] }
+  validates :is_customer, inclusion: { in: [true, false] }, on: :create
 
   # Custom validations
   validate :password_complexity
@@ -19,5 +19,5 @@ class User < ApplicationRecord
   def password_complexity
     return if password.blank? || password =~ /^(?=.*[a-zA-Z])(?=.*[0-9]).{6,}$/
     errors.add :password, 'Complexity requirement not met. Length should be 6 characters or more and include: 1 alphabet and 1 number.'
-  end
+  end, on: :create
 end

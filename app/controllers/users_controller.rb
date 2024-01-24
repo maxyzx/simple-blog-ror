@@ -6,8 +6,13 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     @user.is_customer = true
     if @user.save
-      UserMailer.registration_confirmation(@user).deliver_later
-      render json: { message: 'User successfully registered' }, status: :created
+      token = AuthenticationToken.generate_unique_token_for(@user)
+      if token.save
+        UserMailer.registration_confirmation(@user, token).deliver_later
+        render json: { message: 'Account creation link has been sent to your email.' }, status: :created
+      else
+        render json: { errors: token.errors.full_messages }, status: :unprocessable_entity
+      end
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end

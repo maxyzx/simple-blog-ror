@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   resources :articles do
     resources :comments, only: [:destroy]
   end
+
   # Other routes
+  post '/register', to: 'users#create'
+  post '/verify_email_and_set_password', to: 'users#verify_email_and_set_password'
 end
-post '/verify_email_and_set_password', to: 'users#verify_email_and_set_password'
